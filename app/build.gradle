@@ -1,9 +1,43 @@
-plugins {
-    id 'com.android.application'
-}
+/**
+ * https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html
+ *
+ * >>>>>>>>>>>>每一个build.gradle文件都会转换成一个Project对象<<<<<<<
+ *
+ * 在Gradle术语中，Project对象对应的是BuildScript。 Project包含若干Tasks。
+ * 由于Project对应具体的工程，所以需要为Project加载所需要的插件，
+ * 比如为Java工程加载Java插件。其实，一个Project包含多少Task往往是插件决定的。
+ *
+ * 在Project中，要：
+ *  1.加载插件。
+ *  2.不同插件有不同的行话，即不同的配置。我们要在Project中配置好，这样插件就知道从哪里读取源文件等
+ *  3.设置属性。
+ */
+
+/**
+ * 1.加载插件
+ * apply函数原型:apply(Map<String,>)
+ * Groovy支持 函数调用的时候通过  参数名1:参数值2，参数名2：参数值2 的方式来传递参数
+ */
+//plugins {id 'com.android.application'} //gradle6.8原生的
+apply plugin: "com.android.application"
+//加载自定义插件;当一个Project apply一个gradle文件的时候，这个gradle文件会转换成一个Script对象。
+apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
+
+println "app/build.gradle -->gradle.hashCode:" + gradle.hashCode()//只有一个gradle对象
+println "app/build.gradle -->rootDis: " + rootProject.getRootDir().getAbsolutePath() //home/xxx/Workspace_AS/MySpace/GradleDemo
+//settings.gradleinitMinshengGradleEnvironment() 赋值
+println "app/build.gradle -->gradle.ext.api: " + gradle.ext.api
+
+
+println "app/build.gradle -->ext.utils_name:" + ext.utils_name //utils.gradle中定义
+println "app/build.gradle -->ext.get_v_name():" + ext.get_v_name() //utils.gradle中定义
+
+println "app/build.gradle -->config_int_value:" + rootProject.ext.config_int_value //cong.gradle中定义
+println "app/build.gradle -->config_str_value:" + rootProject.ext.config_str_value //cong.gradle中定义
+
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 29 //调用compileSdkVersion函数,传入29
     buildToolsVersion "30.0.2"
 
     defaultConfig {

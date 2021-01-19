@@ -1,4 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+//设置一些配置
+
+
+println "build.gradle -->start load config.gradle..."
+//apply from: rootProject.getRootDir().getAbsolutePath() + "/config.gradle" //ok,这个也行
+apply from:"config.gradle"
+
+/**
+ * https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html
+ * void buildscript​(Closure configureClosure)
+ *
+ * 它的closure是在一个类型为ScriptHandler的对象上执行的。主意用来所依赖的classpath等信息。
+ * 通过查看ScriptHandler API可知，在buildscript SB中，
+ * 可以调用ScriptHandler提供的repositories(Closure )、dependencies(Closure)函数
+ */
 buildscript {
     repositories {
         google()

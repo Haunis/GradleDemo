@@ -1,0 +1,8 @@
+//放一些通用配置;
+//根目录 build.gradle中使用apply from:"config.gralde"导入该文件
+
+ext {
+    config_int_value = 10
+    config_str_value = "this is config.gradle"
+}
+println "config.gradle -->load success , who load ? <<"+project

@@ -1,0 +1,77 @@
+import groovy.util.XmlSlurper
+
+/**
+ * 提供一些通用的方法给各个project使用
+ *
+ */
+
+def who_load_this() {
+    println "utils.gradle---> load success ,who load ? <<" + project
+}
+//a = 100 //error不能直接这样写..
+who_load_this()
+
+
+def copyFile(String srcFile, dstFile) {
+    //拷贝文件函数，用于将最后的生成物拷贝到指定的目录
+}
+
+def rmFile(String targetFile) {
+    //删除指定目录中的文件
+}
+
+def cleanOutput(boolean bJar = true) {
+    //clean的时候清理
+}
+
+def copyOutput(boolean bJar = true) {
+    //copyOutput内部会调用copyFile完成一次build的产出物拷贝
+}
+
+def getFormatDate() {
+    return new Date().format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT+08:00"))
+}
+
+//定义一个获取AndroidManifests.xmlversionName的函数
+def getVersionName() {
+    println "utils.gradle---> getVersionName called"
+    // project是加载该utils.gradle的project
+    // app/build.gradle 使用apply函数加载project就是app/build.gradle.
+    // hellolib/build.gradle加载亦然
+    def xmlFile = project.file("src/main/AndroidManifest.xml")
+    def rootManifest = new XmlSlurper().parse(xmlFile)
+    println "utils.gradle--->manifest:" + rootManifest //为空....
+    return rootManifest['@android:versionName']
+}
+
+//对于android library编译，disable所有的debug编译任务
+def disableDebugBuild() {
+    //project.tasks包含了所有的tasks，下面的findAll是寻找那些名字中带debug的Task。
+    //返回值保存到targetTasks容器中
+    def targetTasks = project.tasks.findAll { task ->
+        task.name.contains("Debug")
+    }
+    //对满足条件的task，设置它为disable。如此这般，这个Task就不会被执行
+    targetTasks.each {
+        println "utils.gradle--->disable debug task  :${it.name}"
+        it.setEnabled false
+    }
+}
+
+//现在，想把这个API输出到各个Project。由于这个utils.gradle会被每一个Project Apply，所以
+//我可以把getVersionNameAdvanced定义成一个closure，然后赋值到一个外部属性
+//谁使用apply加载,ext就是哪个project的ext
+ext { //此段花括号中代码是闭包
+    //除了ext.xxx=value这种定义方法外，还可以使用ext{}这种书写方法。
+    //ext{}不是ext(Closure)对应的函数调用。但是ext{}中的{}确实是闭包。
+    get_v_name = this.&getVersionName //get_v_name是函数指针
+    utils_name = "this is utils.gradle"
+
+    copyFile = this.&copyFile
+    rmFile = this.&rmFile
+    cleanOutput = this.&cleanOutput
+    copyOutput = this.&copyOutput
+
+    println "utils.gradle---> ext called"
+
+}
