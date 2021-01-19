@@ -29,7 +29,7 @@ println "app/build.gradle -->rootDis: " + rootProject.getRootDir().getAbsolutePa
 println "app/build.gradle -->gradle.ext.api: " + gradle.ext.api
 
 
-println "app/build.gradle -->ext.utils_name:" + ext.utils_name //utils.gradle中定义
+println "app/build.gradle -->ext.utils_name:" + project.ext.utils_name //utils.gradle中定义;可以不用project
 println "app/build.gradle -->ext.get_v_name():" + ext.get_v_name() //utils.gradle中定义
 
 println "app/build.gradle -->config_int_value:" + rootProject.ext.config_int_value //cong.gradle中定义

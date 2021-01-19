@@ -5,6 +5,8 @@
 println "build.gradle -->start load config.gradle..."
 //apply from: rootProject.getRootDir().getAbsolutePath() + "/config.gradle" //ok,这个也行
 apply from:"config.gradle"
+//apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle" //可以放在每个project上
+
 
 /**
  * https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html
