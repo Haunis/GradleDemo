@@ -1,8 +1,11 @@
 plugins {
     id 'com.android.library'
 }
+println "hellolib/build --> ***load success***"
 
-apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
+println "hellolib/build --> apply utils.gradle"
+apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle" //加载utils.gradle
+println "hellolib/build -->date: "+project.ext.getFormatDate()
 
 android {
     compileSdkVersion 29
@@ -38,12 +41,28 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+
 tasks.getByName("assemble") {
     it.doLast {
+        println "hellolib.gradle --> it :"+it
         println "$project.name: After assemble, jar libs are copied tolocal repository"
         project.ext.copyOutput(true) //project代指本build.gradle的意思,可以不指定
+
+
+//        delete 'build/libs/abc.jar'  //删除存在的
+
+//        from('build/intermediates/aar_main_jar/release/') // 从哪拷贝
+//        into('build/libs/') //拷贝到哪儿去
+//        //include ,exclude参数来设置过滤
+//        //（我们只关心classes.jar这个文件）
+//        include('classes.jar')
+//        new_name = project.ext.getFormatDate()
+//        rename ('classes.jar', new_name+'.jar')
     }
 }
+
+
+
 
 '''
 

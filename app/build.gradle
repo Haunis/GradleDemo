@@ -17,23 +17,41 @@
  * 1.加载插件
  * apply函数原型:apply(Map<String,>)
  * Groovy支持 函数调用的时候通过  参数名1:参数值2，参数名2：参数值2 的方式来传递参数
+ *
+ * plugins {id 'com.android.application'} //gradle6.8原生的
  */
-//plugins {id 'com.android.application'} //gradle6.8原生的
 apply plugin: "com.android.application"
+
+println "app/build --> ****load success****"
+
+println "app/build -->gradle.hashCode:" + gradle.hashCode()//只有一个gradle对象
+println "app/build -->gradle.ext.api: " + gradle.ext.api //settings.gradle initEnvironment中赋的值
+println "app/build -->rootDis: " + rootProject.getRootDir().getAbsolutePath() //工程根目录GradleDemo
+
+
 //加载自定义插件;当一个Project apply一个gradle文件的时候，这个gradle文件会转换成一个Script对象。
+println "app/build --> apply utils.gradle"
 apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
+println "app/build -->ext.utils_name:" + project.ext.utils_name //utils.gradle中定义;
+println "app/build -->ext.get_v_name():" + ext.get_v_name() //utils.gradle中定义;可以不用project名
 
-println "app/build.gradle -->gradle.hashCode:" + gradle.hashCode()//只有一个gradle对象
-println "app/build.gradle -->rootDis: " + rootProject.getRootDir().getAbsolutePath() //home/xxx/Workspace_AS/MySpace/GradleDemo
-//settings.gradleinitMinshengGradleEnvironment() 赋值
-println "app/build.gradle -->gradle.ext.api: " + gradle.ext.api
+println "app/build -->config_int_value:" + rootProject.ext.config_int_value //config.gradle中定义
+println "app/build -->config_str_value:" + rootProject.ext.config_str_value //config.gradle中定义
 
-
-println "app/build.gradle -->ext.utils_name:" + project.ext.utils_name //utils.gradle中定义;可以不用project
-println "app/build.gradle -->ext.get_v_name():" + ext.get_v_name() //utils.gradle中定义
-
-println "app/build.gradle -->config_int_value:" + rootProject.ext.config_int_value //cong.gradle中定义
-println "app/build.gradle -->config_str_value:" + rootProject.ext.config_str_value //cong.gradle中定义
+/*
+在 流程2和流程3 之间加个hook
+build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
+*/
+gradle.taskGraph.whenReady {
+    graph -> println "app/build --> taskGraph.whenReady: "+graph
+}
+/*
+在流程3后面加个hook
+build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
+*/
+gradle.buildFinished {
+    buildResult->println "app/build --> buildFinished: "+buildResult
+}
 
 
 android {
@@ -60,9 +78,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    repositories {
+        flatDir {
+            dirs "libs"
+        }
+    }
 }
 
 dependencies {
+//    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
+    implementation(name:'hellolib-debug',ext:'aar')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'

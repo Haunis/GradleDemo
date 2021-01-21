@@ -6,14 +6,22 @@ import groovy.util.XmlSlurper
  */
 
 def who_load_this() {
+    //****************谁使用apply加载该文件,project就是那个gradle文件对应的project对象*********************
     println "utils.gradle---> load success ,who load ? <<" + project
 }
 //a = 100 //error不能直接这样写..
 who_load_this()
 
 
-def copyFile(String srcFile, dstFile) {
+def copyFile(String src_file, dst_file) {
     //拷贝文件函数，用于将最后的生成物拷贝到指定的目录
+    def srcFile = new File(src_file)
+    def targetFile = new File(dst_file)
+    targetFile.withOutputStream {
+        os -> srcFile.withInputStream {
+            ins -> os << ins  //利用OutputStream的<<操作符重载，完成从inputstream到OutputStream的输出
+        }
+    }
 }
 
 def rmFile(String targetFile) {
@@ -31,7 +39,7 @@ def copyOutput(boolean bJar = true) {
 }
 
 def getFormatDate() {
-    return new Date().format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT+08:00"))
+    return new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 //定义一个获取AndroidManifests.xmlversionName的函数
@@ -62,17 +70,19 @@ def disableDebugBuild() {
 
 //现在，想把这个API输出到各个Project。由于这个utils.gradle会被每一个Project Apply，所以
 //我可以把getVersionNameAdvanced定义成一个closure，然后赋值到一个外部属性
-//谁使用apply加载,ext就是哪个project的ext
+//********************谁使用apply加载该文件,ext就是哪个project的ext**************************
 ext { //此段花括号中代码是闭包
     //除了ext.xxx=value这种定义方法外，还可以使用ext{}这种书写方法。
     //ext{}不是ext(Closure)对应的函数调用。但是ext{}中的{}确实是闭包。
-    get_v_name = this.&getVersionName //get_v_name是函数指针
+    get_v_name = this.&getVersionName //get_v_name是函数指针,可以在加载该文件的project使用project.ext.get_v_name()调用
     utils_name = "this is utils.gradle"
 
     copyFile = this.&copyFile
     rmFile = this.&rmFile
     cleanOutput = this.&cleanOutput
     copyOutput = this.&copyOutput
+
+    getFormatDate = this.&getFormatDate
 
     println "utils.gradle---> ext called"
 

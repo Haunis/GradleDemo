@@ -1,37 +1,53 @@
-------------------------------1.build.gradle-----------------------------------
+gradle文档:
+https://docs.gradle.org/current/dsl/index.html
 
-每个project下必须有build.gradle
+------------------------------1.project概念-----------------------------------
+每个待编译的工程叫project,每个project目录下必须有build.gradle文件
 
+每一个Project在构建的时候都包含一系列的Task。
+比如一个Android APK的编译可能包含：Java源码编译Task、资源编译Task、JNI编译Task、lint检查Task、打包生成APK的Task、签名Task等。
+
+multi projects:　目录下必须配置settings.gradle,一般也配置build.gradle
+
+编译某个project的话,cd到该目录(该目录必须含有build.gradle),执行 gradle assemble
+
+
+------------------------------2.gradle-----------------------------------
 gradle 文档: https://docs.gradle.org/current/userguide/userguide.html
 
+build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
+
 gradle常用命令:
-gradle projects : 查看有多少个project
+    gradle projects : 查看multi projects到底包含多少个子Project
+    gradle abcmodule:tasks :查看abcmodule下有多少人个task
+    gradle tasks  如果已经在abcmodule下了,直接执行
+    gradle properties: 用来查看所有属性信息。
 
-gradle abcmodule:tasks :查看abcmodule下有多少人个task
-gradle tasks  如果已经在abcmodule下了,直接执行
-
-gradle properties: 用来查看所有属性信息。
+执行某个task: gradle task_name,如:
+    gradle assemble: 编译该project
+    gradle clean:删除build目录
 
 在gradle xxx中指定什么任务，gradle就会将这个xxx任务链上的所有任务全部按依赖顺序执行一遍
 
-在gradle执行的时候，会将脚本转换成对应的对端：
+在gradle执行的时候，会将脚本转换成对应的对象：
+    1.Gradle对象：当我们执行gradle xxx或者什么的时候，gradle会从默认的配置脚本中构造出一个Gradle对象。
+        在整个执行过程中，只有这么一个对象。Gradle对象的数据类型就是Gradle。一般很少去定制这个默认的配置脚本。
+        在settings.gradle 添加println "settings -->, gradle id is " +gradle.hashCode()
+        可以查看其hashcode,打印结果和app/build.gradle输出一致
+    2.Project对象：每一个build.gradle会转换成一个Project对象。
+    3.Settings对象：显然，每一个settings.gradle都会转换成一个Settings对象。
+    对于其他gradle文件，除非定义了class，否则会转换成一个实现了Script接口的对象。
 
+对象说明:
+    gradle: 整个build过程的唯一对象
+    rootProject: 根目录build.gradle
+    project: 各个工程的build.gradle
 
-在gradle执行的时候，会将脚本转换成对应的对端：
-1.Gradle对象：当我们执行gradle xxx或者什么的时候，gradle会从默认的配置脚本中构造出一个Gradle对象。
-    在整个执行过程中，只有这么一个对象。Gradle对象的数据类型就是Gradle。
-    我们一般很少去定制这个默认的配置脚本。
-
-    在settings.gradle 添加println "settings -->, gradle id is " +gradle.hashCode()
-    可以查看其hashcode,打印结果和app/build.gradle输出一致
-2.Project对象：每一个build.gradle会转换成一个Project对象。
-3.Settings对象：显然，每一个settings.gradle都会转换成一个Settings对象。
-
-------------------------------2.task-----------------------------------
+------------------------------3.task-----------------------------------
 https://docs.gradle.org/current/dsl/org.gradle.api.Task.html
 
 
-------------------------------3.gradlew-----------------------------------
+------------------------------4.gradlew-----------------------------------
 gradlew
 常用命令:
 https://blog.csdn.net/zhihui_520/article/details/53783347

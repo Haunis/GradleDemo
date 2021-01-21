@@ -1,31 +1,33 @@
-//主要用来include 各个module,第一个被执行的gradle
+//主要用来include 各个module,第一个被执行的gradle.被解析成唯一的gradle对象
+//名字必须是settings.gradle。它里边用来告诉Gradle，这个multiprojects包含多少个子Project。
 
-//和app/build.gradle输出的一样,这个执行过程中只有这么一个对象
-println "settings -->gradle.hashCode: " +gradle.hashCode()
+
+println "settings --> ***load success***"
+//和app/build.gradle输出的一样,这个执行过程中只有这么一个gradle对象
+println "settings -->gradle.hashCode: " + gradle.hashCode()
 //HomeDir是在哪个目录存储的gradle可执行程序。
 //home/haunis/.gradle/wrapper/dists/gradle-6.5-all/2oz4ud9k3tuxjg84bbf55q0tn/gradle-6.5
 println "settings -->HomeDir:" + gradle.gradleHomeDir
-//gradleUserHomeDir是gradle自己设置的目录，里边存储了一些配置文件，
-//以及编译过程中的缓存文件，生成的类文件，编译中依赖的插件等等
+//gradleUserHomeDir是gradle自己设置的目录
+//存储了一些配置文件，以及编译过程中的缓存文件，生成的类文件，编译中依赖的插件等等
 // home/xxx/.gradle
 println "settings -->UserHomeDir:" + gradle.gradleUserHomeDir
 println "settings -->Parent: " + gradle.parent //null
 
 
-def initMinshengGradleEnvironment(){
+def initEnvironment() {
     //属性值从local.properites中读取
     Properties properties = new Properties()
-    File propertyFile = new File(rootDir.getAbsolutePath() +"/local.properties")
+    File propertyFile = new File(rootDir.getAbsolutePath() + "/local.properties")
     properties.load(propertyFile.newDataInputStream())
     //gradle就是gradle对象。它默认是Settings和Project的成员变量。可直接获取
     //ext前缀，表明操作的是外置属性。api是一个新的属性名。前面说过，只在
     //第一次定义或者设置它的时候需要ext前缀
-    gradle.ext.api =properties.getProperty('sdk.api')
+    gradle.ext.api = properties.getProperty('sdk.api')
 
-    println "settings -->api: "+gradle.api  //再次存取api的时候，就不需要ext前缀了
+    println "settings -->initEnvironment api=" + gradle.api  //再次存取api的时候，就不需要ext前缀了
 }
-
-initMinshengGradleEnvironment()
+initEnvironment()
 
 include ':hellolib'
 include ':app'
