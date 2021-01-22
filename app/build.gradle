@@ -68,11 +68,17 @@ gradle.buildFinished {
 //task myTask(type: SomeType) { configure closure }
 
 task myTask1  //<==myTask是新建Task的名字
-task myTask2 { println "app/build -->myTask2" } //返回myTask2之前,会先执行闭包
+task myTask2 { println "app/build -->myTask2" } //返回myTask2之前,会先执行里面的action
+task myTask3 { //可以直接执行 gradle myTask3
+    doLast {
+        println "app/build -->myTask3"
+    }
+}
+
 //建了一个Task对象，同时把closure做为一个action加到这个Task的action队列中，
 // 并且告诉它“最后才执行这个closure”（注意，<<符号是doLast的代表）。
-//task myTask3 << { println "build.gradle -->myTask3" } //error <<符号是doLast的缩写
-task myTask3() { println "build.gradle -->myTask3" } //ok
+//task myTask4<< { println "build.gradle -->myTask4" } //error <<符号是doLast的缩写
+task myTask4() { println "build.gradle -->myTask4" } //ok
 
 //执行 ./gradlew assemble或者 ./gradlew app:assemble会执行该task
 tasks.getByName("assemble") {
@@ -82,18 +88,30 @@ tasks.getByName("assemble") {
     }
 }
 
+// ./gradlew app:makeapk 或者gradle app:makeapk
+task makeapk(type: Copy) {
+    println "app/build -->makeapk "
 
-task makejar(type: Copy) {
-    println "app/build -->makejar"
+//    delete "apks/app-debug.apk" //不能用匹配符*
+    //删除apks下所有apk
+    FileTree tree = fileTree(dir: 'apks/')
+    tree.each { File file ->
+        if (file.toString().contains("apk")) {
+            delete file
+            println "app/build --> makeapk,delete" + file
+        }
+    }
+    //拷贝
+    from('build/outputs/apk/debug/')
+    into('apks/')
+    include('*.apk') //include ,exclude参数来设置过滤
+    def name = "app-" + rootProject.ext.app_version + ".apk"
+    //重命名
+    rename('app-debug.apk', name)
 
-//    delete 'build/libs/msdcomsdk.jar'
-//    from('build/intermediates/packaged-classes/release/')
-//    into('build/libs/')
-//    include('classes.jar') //include ,exclude参数来设置过滤
-//    rename ('classes.jar', 'msdcomsdk.jar')
 }
 
-makejar.dependsOn(build)
+makeapk.dependsOn(build)//依赖build,所以先build再执行makeapk
 
 //++++++++++++++++++++++++++++++5.++++++++++++++++++++++++++++++
 project.afterEvaluate {

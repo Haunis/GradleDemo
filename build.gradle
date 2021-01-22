@@ -21,7 +21,10 @@ gradle.beforeProject {
 }
 
 
-
+ext{
+    app_version = "1.0.0"
+    hello_lib_version = "2.0.0"
+}
 
 /**
  * 按照Gradle的定义buildscript,repositories这些都是Script Block

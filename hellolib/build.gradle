@@ -42,6 +42,30 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
+
+// ./gradlew hellolib:makeaar 或者gradle hellolib:makeaar
+task makeaar(type: Copy) {
+    println "hellolib/build -->makeaar "
+
+//    delete "apks/app-debug.apk" //不能用匹配符*
+    //删除out_aar下所有apk
+    FileTree tree = fileTree(dir: 'out_aar/')
+    tree.each { File file ->
+        if (file.toString().contains("apk")) {
+            delete file
+            println "hellolib/build --> makeaar,delete" + file
+        }
+    }
+    //拷贝
+    from('build/outputs/aar/')
+    into('out_aar/')
+    include('*.aar') //include ,exclude参数来设置过滤
+    def name = "hellolib-" + rootProject.ext.hello_lib_version + ".aar"
+    //重命名
+    rename('hellolib-debug.aar', name)
+}
+makeaar.dependsOn(build)//依赖build,所以先build再执行makeapk
+
 //执行 ./gradlew assemble或者 ./gradlew hellolib:assemble会执行该task
 tasks.getByName("assemble") {
     it.doLast {

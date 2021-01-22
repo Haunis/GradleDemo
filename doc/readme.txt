@@ -81,5 +81,10 @@ https://www.jianshu.com/p/db62617cbbff
 ------------------------------5.task-----------------------------------
 https://docs.gradle.org/current/dsl/org.gradle.api.Task.html
 
+task介绍
+https://blog.csdn.net/u011077027/article/details/103184087
+https://blog.csdn.net/u011077027/article/details/103186771
 
+task delete所有文件
+https://www.cnblogs.com/androiddream/p/7880584.html
 
