@@ -21,7 +21,6 @@
  * plugins {id 'com.android.application'} //gradle6.8原生的
  */
 apply plugin: "com.android.application"
-
 println "app/build --> ****load success****"
 
 println "app/build -->gradle.hashCode:" + gradle.hashCode()//只有一个gradle对象
@@ -34,25 +33,49 @@ println "app/build --> apply utils.gradle"
 apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
 println "app/build -->ext.utils_name:" + project.ext.utils_name //utils.gradle中定义;
 println "app/build -->ext.get_v_name():" + ext.get_v_name() //utils.gradle中定义;可以不用project名
+println "build/build -->date: "+project.ext.getFormatDate()
+println "app/build -->" + project.ext.disableDebugBuild()
 
-println "app/build -->config_int_value:" + rootProject.ext.config_int_value //config.gradle中定义
-println "app/build -->config_str_value:" + rootProject.ext.config_str_value //config.gradle中定义
+//根目录build.gradle ext属性
+println "app/build -->config_int_value:" + rootProject.ext.config_int_value
+println "app/build -->config_str_value:" + rootProject.ext.config_str_value
 
-/*
-在 流程2和流程3 之间加个hook
-build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
-*/
+
+//+++++++++++++++++++++++++ hook start +++++++++++++++++++++++++++++
+//在 流程2和流程3 之间加个hook
+//build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
 gradle.taskGraph.whenReady {
-    graph -> println "app/build --> taskGraph.whenReady: "+graph
-}
-/*
-在流程3后面加个hook
-build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
-*/
-gradle.buildFinished {
-    buildResult->println "app/build --> buildFinished: "+buildResult
+    graph -> println "app/build --> taskGraph.whenReady: " + graph
 }
 
+//在流程3后面加个hook
+//build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
+gradle.buildFinished {
+    buildResult ->
+        println "app/build --> buildFinished1: " + buildResult
+        println "app/build --> buildFinished2: " + buildResult
+        println "app/build --> buildFinished3: " + buildResult
+        println "app/build --> buildFinished4: " + buildResult
+        println "app/build --> buildFinished5: " + buildResult
+
+}
+//+++++++++++++++++++++++++ hook end +++++++++++++++++++++++++++++
+
+
+//-------------------------task start --------------------------------
+//Task是和Project关联的，所以，我们要利用Project的task函数来创建一个Task
+//task myTask  //<==myTask是新建Task的名字
+//task myTask { configure closure }
+//task myType << { task action } //<==注意，<<符号是doLast的缩写
+//task myTask(type: SomeType)
+//task myTask(type: SomeType) { configure closure }
+
+task myTask1  //<==myTask是新建Task的名字
+task myTask2 { println "app/build -->myTask2" } //返回myTask2之前,会先执行闭包
+//建了一个Task对象，同时把closure做为一个action加到这个Task的action队列中，
+// 并且告诉它“最后才执行这个closure”（注意，<<符号是doLast的代表）。
+//task myTask3 <<{ println "build.gradle -->myTask3" } //error <<符号是doLast的缩写
+//-------------------------task end --------------------------------
 
 android {
     compileSdkVersion 29 //调用compileSdkVersion函数,传入29
@@ -86,8 +109,8 @@ android {
 }
 
 dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
-    implementation(name:'hellolib-debug',ext:'aar')
+//    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar']) //ok
+    implementation(name: 'hellolib-debug', ext: 'aar')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'

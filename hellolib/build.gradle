@@ -1,11 +1,10 @@
-plugins {
-    id 'com.android.library'
-}
+plugins {id 'com.android.library'}
+
 println "hellolib/build --> ***load success***"
 
 println "hellolib/build --> apply utils.gradle"
 apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle" //加载utils.gradle
-println "hellolib/build -->date: "+project.ext.getFormatDate()
+
 
 android {
     compileSdkVersion 29

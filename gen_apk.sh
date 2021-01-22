@@ -9,7 +9,7 @@
 ./gradlew hellolib:assemble  # build hellolib
 cp hellolib/build/outputs/aar/hellolib-debug.aar app/libs/
 
-./gradlew app:clean assemble #build app
+./gradlew app:assemble #build app
 
 adb shell pm uninstall com.jiage.gradledemo
 adb install ./app/build/outputs/apk/debug/app-debug.apk

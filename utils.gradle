@@ -59,12 +59,14 @@ def disableDebugBuild() {
     //project.tasks包含了所有的tasks，下面的findAll是寻找那些名字中带debug的Task。
     //返回值保存到targetTasks容器中
     def targetTasks = project.tasks.findAll { task ->
-        task.name.contains("Debug")
+//        task.name.contains("Debug")
+        task.name.contains("build")
+//        println "utils.gradle--->findAll, task  :${task.name}"
     }
     //对满足条件的task，设置它为disable。如此这般，这个Task就不会被执行
     targetTasks.each {
         println "utils.gradle--->disable debug task  :${it.name}"
-        it.setEnabled false
+//        it.setEnabled false
     }
 }
 
@@ -83,6 +85,7 @@ ext { //此段花括号中代码是闭包
     copyOutput = this.&copyOutput
 
     getFormatDate = this.&getFormatDate
+    disableDebugBuild = this.&disableDebugBuild
 
     println "utils.gradle---> ext called"
 

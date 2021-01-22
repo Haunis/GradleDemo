@@ -1,17 +1,19 @@
 /**
+ * 一般用来做全局配置
  *配置其他子Project的。比如为子Project添加一些属性。这个build.gradle有没有都无所属???
  *被解析出来是个project对象
  */
 
 println "build.gradle --> ***load success***"
 println "build.gradle --> apply config.gradle"
-//加载config.gradle
+//1.加载config.gradle
 //apply from: rootProject.getRootDir().getAbsolutePath() + "/config.gradle" //ok,这个也行
 apply from:"config.gradle"
 //apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle" //可以放在每个project上
 
+
 /*
-在 流程1和流程2 之间加个hook
+2.在 流程1和流程2 之间加个hook
 build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
 */
 gradle.beforeProject {
