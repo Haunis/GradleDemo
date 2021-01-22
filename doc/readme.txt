@@ -11,8 +11,20 @@ multi projects:　目录下必须配置settings.gradle,一般也配置build.grad
 
 编译某个project的话,cd到该目录(该目录必须含有build.gradle),执行 gradle assemble
 
+------------------------------2.Script Block概念-----------------------------------
+https://docs.gradle.org/current/dsl/index.html
+build.grade文件里的一些方法,如allprojects { },buildscript { }等
 
-------------------------------2.gradle-----------------------------------
+这些Script Block实际上是个方法,方法里是闭包,可以在下述页面搜索到.
+https://docs.gradle.org/current/javadoc/index-all.html
+
+buildscript:
+    它的closure是在一个类型为ScriptHandler的对象上执行的。主意用来所依赖的classpath等信息。
+    通过查看ScriptHandler API可知，在buildscript SB中，可以调用ScriptHandler提供的
+    repositories(Closure )、dependencies(Closure)函数。
+    这也是为什么repositories和dependencies两个SB为什么要放在buildscript的花括号中的原因
+
+------------------------------3.gradle-----------------------------------
 gradle 文档: https://docs.gradle.org/current/userguide/userguide.html
 
 build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
@@ -25,6 +37,8 @@ gradle常用命令:
 
 执行某个task: gradle task_name,如:
     gradle assemble: 编译该project
+    gradle app:assemble
+    gradle hellolib:assemble
     gradle clean:删除build目录
 
 在gradle xxx中指定什么任务，gradle就会将这个xxx任务链上的所有任务全部按依赖顺序执行一遍
@@ -42,9 +56,6 @@ gradle常用命令:
     gradle: 整个build过程的唯一对象
     rootProject: 根目录build.gradle
     project: 各个工程的build.gradle
-
-------------------------------3.task-----------------------------------
-https://docs.gradle.org/current/dsl/org.gradle.api.Task.html
 
 
 ------------------------------4.gradlew-----------------------------------
@@ -67,6 +78,8 @@ https://www.jianshu.com/p/db62617cbbff
     5、单个渠道打包：./gradlew assembleGoogle
         这个会生成release和debug两个版本的apk
 
+------------------------------5.task-----------------------------------
+https://docs.gradle.org/current/dsl/org.gradle.api.Task.html
 
 
 

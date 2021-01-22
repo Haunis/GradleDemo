@@ -21,20 +21,24 @@ gradle.beforeProject {
 }
 
 
+
+
 /**
+ * 按照Gradle的定义buildscript,repositories这些都是Script Block
+ * 实际上就是一个个函数
  * https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html
  * void buildscript​(Closure configureClosure)
  *
- * 它的closure是在一个类型为ScriptHandler的对象上执行的。主意用来所依赖的classpath等信息。
+ * 它的closure是在一个类型为ScriptHandler的对象上执行的。
  * 通过查看ScriptHandler API可知，在buildscript SB中，
  * 可以调用ScriptHandler提供的repositories(Closure )、dependencies(Closure)函数
  */
-buildscript {
+buildscript { //是个Script Block
     repositories {
         google()
-        jcenter()
+        jcenter()//是个函数,表示编译过程中依赖的库，所需的插件可以在jcenter仓库中下载。
     }
-    dependencies {
+    dependencies {//是个Script Block
         classpath "com.android.tools.build:gradle:4.1.0"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -42,7 +46,8 @@ buildscript {
     }
 }
 
-allprojects {
+allprojects { //配置每个子project
+    println"build.gradle --> allprojects, $project.name" //遍历子Project，project变量对应每个子Project
     repositories {
         google()
         jcenter()

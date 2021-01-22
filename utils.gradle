@@ -34,7 +34,7 @@ def cleanOutput(boolean bJar = true) {
 
 def copyOutput(boolean bJar = true) {
     //copyOutput内部会调用copyFile完成一次build的产出物拷贝
-    println "utils.gradle---> copyOutput called"
+    println "utils.gradle---> copyOutput called,$project.name"
 
 }
 
