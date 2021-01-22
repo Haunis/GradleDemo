@@ -27,6 +27,7 @@ buildscript:
 ------------------------------3.gradle-----------------------------------
 gradle 文档: https://docs.gradle.org/current/userguide/userguide.html
 
+生命周期:https://docs.gradle.org/current/userguide/build_lifecycle.html
 build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
 
 gradle常用命令:

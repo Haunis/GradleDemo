@@ -56,6 +56,14 @@ gradle.buildFinished {
         println "app/build --> buildFinished1: " + buildResult
         println "app/build --> buildFinished2: " + buildResult
         println "app/build --> buildFinished3: " + buildResult
+        println "app/build --> buildFinished3: " + buildResult
+        println "app/build --> buildFinished3: " + buildResult
+
+        //不能拷贝
+//        Copy myCopy = task(myCopy, type: Copy)
+//        myCopy.from 'build/outputs/apk/debug/'
+//        myCopy.into 'apks'
+//        myCopy.include('*.apk')
 }
 
 
@@ -68,29 +76,38 @@ gradle.buildFinished {
 //task myTask(type: SomeType) { configure closure }
 
 task myTask1  //<==myTask是新建Task的名字
-task myTask2 { println "app/build -->myTask2" } //返回myTask2之前,会先执行里面的action
+task myTask2 { println "app/build -->task2" } //返回myTask2之前,会先执行里面的action
 task myTask3 { //可以直接执行 gradle myTask3
     doLast {
-        println "app/build -->myTask3"
+        println "app/build -->task3"
     }
 }
 
 //建了一个Task对象，同时把closure做为一个action加到这个Task的action队列中，
 // 并且告诉它“最后才执行这个closure”（注意，<<符号是doLast的代表）。
 //task myTask4<< { println "build.gradle -->myTask4" } //error <<符号是doLast的缩写
-task myTask4() { println "build.gradle -->myTask4" } //ok
+task myTask4() { println "app/build -->task4" } //ok
 
 //执行 ./gradlew assemble或者 ./gradlew app:assemble会执行该task
+//对于Android编译，我一般指定gradle assemble它默认编译debug和release两种输出。
+// 所以，下面这个段代码表示：tasks代表一个Projects中的所有Task，是一个容器,getByName表示找到指定名称的任务。
+//这里要找的assemble任务，然后通过doLast添加了一个Action。这个Action就是copy产出物到设置的目标目录中去
 tasks.getByName("assemble") {
     it.doLast {
-        println "app/build -->getByName project_name:$project.name,  it=$it"
+        println "app/build -->task getByName project_name:$project.name,  it=$it"
         project.ext.copyOutput(true) //project代指本build.gradle的意思,可以不指定
+
+            //不能拷贝
+//        Copy myCopy = task(myCopy, type: Copy)
+//        myCopy.from 'build/outputs/apk/debug/'
+//        myCopy.into 'apks'
+//        myCopy.include('*.apk')
     }
 }
 
 // ./gradlew app:makeapk 或者gradle app:makeapk
 task makeapk(type: Copy) {
-    println "app/build -->makeapk "
+    println "app/build -->task makeapk "
 
 //    delete "apks/app-debug.apk" //不能用匹配符*
     //删除apks下所有apk
@@ -98,7 +115,7 @@ task makeapk(type: Copy) {
     tree.each { File file ->
         if (file.toString().contains("apk")) {
             delete file
-            println "app/build --> makeapk,delete" + file
+            println "app/build --> task makeapk,delete" + file
         }
     }
     //拷贝
@@ -110,8 +127,8 @@ task makeapk(type: Copy) {
     rename('app-debug.apk', name)
 
 }
-
 makeapk.dependsOn(build)//依赖build,所以先build再执行makeapk
+//makeapk.dependsOn(assemble)//依赖build,所以先build再执行makeapk
 
 //++++++++++++++++++++++++++++++5.++++++++++++++++++++++++++++++
 project.afterEvaluate {
@@ -151,8 +168,8 @@ android {
 }
 
 dependencies {
-//    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar']) //ok
-    implementation(name: 'hellolib-debug', ext: 'aar')
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar']) //ok
+//    implementation(name: 'hellolib-debug', ext: 'aar')
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
