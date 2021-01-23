@@ -14,12 +14,15 @@ who_load_this()
 
 
 def copyFile(String src_file, dst_file) {
+    println "utils.gradle -->copyFile from $src_file, to $dst_file ,<< called"+project
     //拷贝文件函数，用于将最后的生成物拷贝到指定的目录
     def srcFile = new File(src_file)
     def targetFile = new File(dst_file)
     targetFile.withOutputStream {
-        os -> srcFile.withInputStream {
-            ins -> os << ins  //利用OutputStream的<<操作符重载，完成从inputstream到OutputStream的输出
+        os ->
+            srcFile.withInputStream {
+            ins ->
+                os << ins  //利用OutputStream的<<操作符重载，完成从inputstream到OutputStream的输出
         }
     }
 }
