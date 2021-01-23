@@ -53,7 +53,7 @@ task makeaar(type: Copy) {
     tree.each { File file ->
         if (file.toString().contains("aar")) {
             delete file
-            println "hellolib/build --> task makeaar delete" + file
+            println "hellolib/build --> task makeaar delete " + file
         }
     }
     //拷贝
@@ -65,7 +65,7 @@ task makeaar(type: Copy) {
     //重命名
     rename('hellolib-release.aar', name)
 }
-//makeaar.dependsOn(assemble)//依赖build,所以先build再执行makeapk
+//makeaar.dependsOn(assemble)//依赖assemble,所以先build再执行makeapk
 makeaar.dependsOn(build)//依赖build,所以先build再执行makeapk
 
 //执行 ./gradlew assemble或者 ./gradlew hellolib:assemble会执行该task

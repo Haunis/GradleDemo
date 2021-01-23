@@ -28,7 +28,11 @@ buildscript:
 gradle 文档: https://docs.gradle.org/current/userguide/userguide.html
 
 生命周期:https://docs.gradle.org/current/userguide/build_lifecycle.html
-build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
+
+build.gradle执行流程:
+    1.Initiliazation: 执行setting.gradle
+    2.Configration: 解析每个工程下的build.gradle
+    3.Execution: 执行这些task
 
 gradle常用命令:
     gradle projects : 查看multi projects到底包含多少个子Project
