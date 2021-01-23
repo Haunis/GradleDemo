@@ -4,11 +4,12 @@
 #./gradlew clean assembleDebug
 #./gradlew clean assemble
 
+rm app/libs/hello*
+rm app/apks/*
+rm hellolib/out_aar/*
 
 #gradle hellolib:assemble  # build hellolib ;这个也ok,但是gradle是系统的程序
 ./gradlew hellolib:makeaar  # 只编译 hellolib,不编译app模块
-
-rm app/libs/hello*
 cp hellolib/out_aar/*.aar app/libs/ #hellolib编译的aar拷贝至app使用
 
 #./gradlew app:clean assembleRelease #build app

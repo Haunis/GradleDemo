@@ -15,16 +15,25 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
     }
 
     buildTypes {
         release {
+//            buildConfigField "String", "VERSION_NAME", "\"release_1.2.0\""
+            buildConfigField "String", "VERSION_NAME", "\"realease_$rootProject.ext.hello_lib_version\""
+            buildConfigField "int", "VERSION_CODE", "2"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+//            buildConfigField "String", "VERSION_NAME", "\"debug_1.2.0\""
+            buildConfigField "String", "VERSION_NAME", "\"debug_$rootProject.ext.hello_lib_version\""
+            buildConfigField "int", "VERSION_CODE", "2"
         }
     }
     compileOptions {
@@ -48,7 +57,9 @@ task makeaar(type: Copy) {
     println "hellolib/build -->task makeaar "
 
 //    delete "apks/app-debug.apk" //不能用匹配符*
-    //删除out_aar下所有aar
+    //删除out_aar下所有aar.
+    //注意,该处的代码是在configration阶段,执行gen_apk.sh后,会删除out_aar/目录下的aar包
+    //因为脚本中./gradlew hellolib:makeaar生成aar包后,./gradlew app:clean assemble会再次执行build流程
     FileTree tree = fileTree(dir: 'out_aar/')
     tree.each { File file ->
         if (file.toString().contains("aar")) {
