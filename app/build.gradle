@@ -45,19 +45,21 @@ println "app/build -->config_str_value:" + rootProject.ext.config_str_value
 
 //++++++++++++++++++++++++++++++ 3.使用hook ++++++++++++++++++++++++++++++++++
 //在 流程2和流程3 之间加个hook; 1和2之间的hook可以在根目录build.gradle加
+//所有build.gradle解析完之后,包括hellolib/build.gradle解析完
 //build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
 gradle.taskGraph.whenReady {
-    graph -> println "app/build --> taskGraph.whenReady: " + graph
+    graph ->
+        println "app/build -->hook taskGraph.whenReady: " + graph
 }
 
 //在流程3后面加个hook
 gradle.buildFinished {
     buildResult ->
-        println "app/build --> buildFinished1: " + buildResult
-        println "app/build --> buildFinished2: " + buildResult
-        println "app/build --> buildFinished3: " + buildResult
-        println "app/build --> buildFinished3: " + buildResult
-        println "app/build --> buildFinished3: " + buildResult
+        println "app/build -->hook buildFinished1: " + buildResult
+        println "app/build -->hook buildFinished2: " + buildResult
+        println "app/build -->hook buildFinished3: " + buildResult
+        println "app/build -->hook buildFinished4: " + buildResult
+        println "app/build -->hook buildFinished5: " + buildResult
 
         //不能拷贝
 //        Copy myCopy = task(myCopy, type: Copy)
@@ -66,8 +68,21 @@ gradle.buildFinished {
 //        myCopy.include('*.apk')
 }
 
+//++++++++++++++++++++++++++++++++4.project.afterEvaluate++++++++++++++++++++++++++++++++++++++
+//在project创建完所有task向量图后
+project.afterEvaluate {
+    //在本build.gradle解析完成之后执行,在hook gradle.taskGraph.whenReady之前执行
+    //hook gradle.taskGraph.whenReady是所有build.gradle解析完,包括hellolib/build.gradle
+    println "app/build -->afterEvaluate configuration"
+//    disableDebugBuild()
+    tasks.getByName("preDebugBuild") { //找到preDebugBuild任务,在execution阶段执行
+        it.doFirst {//execution阶段第一个任务??
+            println "app/build -->task , afterEvaluate getByName project_name:$project.name,  it=$it"
+        }
+    }
+}
 
-//-----------------------------4.使用task  -------------------------------------
+//-----------------------------5.使用task  -------------------------------------
 //Task是和Project关联的，所以，我们要利用Project的task函数来创建一个Task
 //task myTask  //<==myTask是新建Task的名字
 //task myTask { configure closure }
@@ -111,8 +126,15 @@ tasks.getByName("assemble") {
     }
 }
 
+task deleteapk(type:Delete){
+    println "app/build -->task deleteapkd configration "
+    delete "apks"
+}
+deleteapk.dependsOn(build)//依赖build,所以先build再执行deleteapk
 
-//执行 ./gradle myCopy即可拷贝; 或者用下述makeapk闭包的形式
+
+//执行 ./gradle myCopy即可拷贝;
+//用下述makeapk闭包的形式也可以创建copy任务
 Copy copyTask = task(copyTask, type: Copy)
 copyTask.from 'build/outputs/apk/debug/'
 copyTask.into 'apks'
@@ -124,17 +146,19 @@ copyTask.include('*.apk')
 task makeapk(type: Copy) {
     println "app/build -->task makeapk configration "
 
-//    delete "apks/app-debug.apk" //不能用匹配符*
+//    delete "apks/app-debug.apk"//configration阶段执行
+//    delete "apks/*.apk" //删除失败,不能用使用*
+//    delete "apks" //删除整个文件夹
 
-    //删除apks下所有apk
-    FileTree tree = fileTree(dir: 'apks/')
-    tree.each {
-        File file ->
-            if (file.toString().contains("apk")) {
-                delete file
-                println "app/build --> task makeapk,delete " + file
-            }
-    }
+//    //删除apks下所有apk; configration阶段执行
+//    FileTree tree = fileTree(dir: 'apks/')
+//    tree.each {
+//        File file ->
+//            if (file.toString().contains("apk")) {
+//                delete file
+//                println "app/build --> task makeapk,delete " + file
+//            }
+//    }
 
     //拷贝
     from('build/outputs/apk/debug/')
@@ -145,14 +169,9 @@ task makeapk(type: Copy) {
     rename('app-debug.apk', name)
     println "app/build -->task makeapk configration  end"
 }
-makeapk.dependsOn(build)//依赖build,所以先build再执行makeapk
+makeapk.dependsOn(deleteapk)//依赖build,所以先build再执行makeapk
 //makeapk.dependsOn(assemble)//依赖build,所以先build再执行makeapk
 
-//++++++++++++++++++++++++++++++5.++++++++++++++++++++++++++++++
-project.afterEvaluate {
-    println "app/build -->afterEvaluate"
-//    disableDebugBuild()
-}
 
 android {
     compileSdkVersion 29 //调用compileSdkVersion函数,传入29

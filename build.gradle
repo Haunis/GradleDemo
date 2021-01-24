@@ -6,24 +6,29 @@
 
 println "build.gradle --> ***load success***"
 println "build.gradle --> apply config.gradle"
-//1.加载config.gradle
+//加载config.gradle
 //apply from: rootProject.getRootDir().getAbsolutePath() + "/config.gradle" //ok,这个也行
 apply from:"config.gradle"
 //apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle" //可以放在每个project上
 
 
 /*
-2.在 流程1和流程2 之间加个hook
+在 流程1和流程2 之间加个hook
 build.gradle执行流程: 1.setting.gradle --> 2.每个工程下的build.gradle --> 3.执行这些task
 */
 gradle.beforeProject {
-    project -> println "build.gradle --> beforeProject, " + project
+    project ->
+        println "build.gradle --> hook beforeProject1, " + project
+        println "build.gradle --> hook beforeProject2, " + project
+        println "build.gradle --> hook beforeProject3, " + project
+        println "build.gradle --> hook beforeProject4, " + project
+        println "build.gradle --> hook beforeProject5, " + project
 }
 
 
 ext{
     app_version = "1.0.0"
-    hello_lib_version = "4.0.0"
+    hello_lib_version = "7.0.0"
 }
 
 /**

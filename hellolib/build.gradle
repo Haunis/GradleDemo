@@ -51,22 +51,28 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
+//////////////////////////创建task////////////////////////////////
+task deleteaar(type:Delete){
+    println "hellolib/build -->task deleteaar configration "
+    delete "out_aar"
+}
+//deleteaar.dependsOn(assemble)//依赖assemble,所以先assemble再执行deleteaar
+deleteaar.dependsOn(build)
 
 // ./gradlew hellolib:makeaar 或者gradle hellolib:makeaar
 task makeaar(type: Copy) {
     println "hellolib/build -->task makeaar "
 
-//    delete "apks/app-debug.apk" //不能用匹配符*
-    //删除out_aar下所有aar.
-    //注意,该处的代码是在configration阶段,执行gen_apk.sh后,会删除out_aar/目录下的aar包
-    //因为脚本中./gradlew hellolib:makeaar生成aar包后,./gradlew app:clean assemble会再次执行build流程
-    FileTree tree = fileTree(dir: 'out_aar/')
-    tree.each { File file ->
-        if (file.toString().contains("aar")) {
-            delete file
-            println "hellolib/build --> task makeaar delete " + file
-        }
-    }
+//    //删除out_aar下所有aar.
+//    //注意,该处的代码是在configration阶段,执行gen_apk.sh后,会删除out_aar/目录下的aar包
+//    //因为脚本中./gradlew hellolib:makeaar生成aar包后,./gradlew app:clean assemble会再次执行build流程
+//    FileTree tree = fileTree(dir: 'out_aar/')
+//    tree.each { File file ->
+//        if (file.toString().contains("aar")) {
+//            delete file
+//            println "hellolib/build --> task makeaar delete " + file
+//        }
+//    }
     //拷贝
 //    from('build/outputs/aar/')
     from('build/outputs/aar/hellolib-release.aar')
@@ -76,8 +82,8 @@ task makeaar(type: Copy) {
     //重命名
     rename('hellolib-release.aar', name)
 }
-//makeaar.dependsOn(assemble)//依赖assemble,所以先build再执行makeapk
-makeaar.dependsOn(build)//依赖build,所以先build再执行makeapk
+makeaar.dependsOn(deleteaar)//依赖build,所以先build再执行makeapk
+
 
 //执行 ./gradlew assemble或者 ./gradlew hellolib:assemble会执行该task
 tasks.getByName("assemble") {
