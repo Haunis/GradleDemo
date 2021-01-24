@@ -93,10 +93,10 @@ project.afterEvaluate {
 task myTask1  //myTask是新建Task的名字
 task myTask2 { println "app/build -->task2" } //返回myTask2之前,会先执行里面的action
 task myTask3 {
-    println "app/build -->task3 out" //在第二阶段Configration阶段执行,执行任意一个任务都可以执行到此处
+    println "app/build -->task3 configuration" //在第二阶段Configration执行;执行任意一个任务都可以执行到此处
     doFirst {
         //第三阶段Execution阶段执行; 必须gradle myTask3才能执行到此处
-        println "app/build -->task3 in"
+        println "app/build -->task3 execution versionname="+android.defaultConfig.versionName
         project.ext.copyFile("app/build/outputs/apk/debug/app-debug.apk", "app/apks/app-debug.apk")
 
     }
@@ -182,7 +182,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName rootProject.ext.app_version
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -27,7 +27,7 @@ gradle.beforeProject {
 
 
 ext{
-    app_version = "1.0.0"
+    app_version = "4.4.0"
     hello_lib_version = "7.0.0"
 }
 
