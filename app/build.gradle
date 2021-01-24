@@ -164,9 +164,10 @@ task makeapk(type: Copy) {
     from('build/outputs/apk/debug/')
     into('apks/')
     include('*.apk') //include ,exclude参数来设置过滤
+    //此处versionName为null,要在android后面使用,下面的makeapk2是可以的
+//    def name = "app-" + android.defaultConfig.versionName + ".apk"
     def name = "app-" + rootProject.ext.app_version + ".apk"
-    //重命名
-    rename('app-debug.apk', name)
+    rename('app-debug.apk', name)    //重命名
     println "app/build -->task makeapk configration  end"
 }
 makeapk.dependsOn(deleteapk)//依赖build,所以先build再执行makeapk
@@ -214,4 +215,19 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+
+task makeapk2(type: Copy) {
+    println "app/build -->task makeapk2 configration "
+    //拷贝
+    from('build/outputs/apk/debug/')
+    into('apks/')
+    include('*.apk') //include ,exclude参数来设置过滤
+//    def name = "app-" + rootProject.ext.app_version + ".apk"
+    def name = "app-" + android.defaultConfig.versionName + ".apk"
+    println "app/build --> name2:"+name
+    //重命名
+    rename('app-debug.apk', name)
+    println "app/build -->task makeapk configration  end"
 }
